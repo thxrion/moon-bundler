@@ -1,4 +1,5 @@
 import os
+import sys
 import ntpath
 import re
 
@@ -71,3 +72,9 @@ def create_bundle(_path):
   bundle_path = get_bundle_path(_path)
   bundle_code = get_bundle_code(_path)
   write_file(bundle_path, bundle_code)
+
+if __name__ == "__main__":
+  _path = sys.argv[1]
+  if _path:
+    create_bundle(_path)
+  os.system("pause")
