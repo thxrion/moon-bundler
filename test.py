@@ -6,9 +6,9 @@ TEST_EXAMPLES = [
   ".\\test\\project3\\project3.lua",
 ]
 
-def test_bundler(_path):
-  real_output = get_bundle_code(_path)
-  expected_output = read_file(get_bundle_path(_path))
+def test_bundler(file_path):
+  real_output = get_bundle_code(file_path)
+  expected_output = read_file(get_bundle_path(file_path))
   return real_output == expected_output
 
 fails = []

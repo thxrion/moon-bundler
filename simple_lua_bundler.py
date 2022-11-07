@@ -78,7 +78,7 @@ def create_bundle(file_path):
   write_file(bundle_path, bundle_code)
 
 if __name__ == "__main__":
-  _path = sys.argv[1]
-  if _path:
-    create_bundle(_path)
+  file_path = sys.argv[1]
+  if file_path:
+    create_bundle(file_path)
   os.system("pause")
