@@ -1,4 +1,4 @@
-from simple_lua_bundler import create_bundle, read_file, get_bundle_code, get_bundle_path
+from bundle import create_bundle, read_file, get_bundle_code, get_bundle_path
 
 TEST_EXAMPLES = [
   ".\\test\\project1\\project1.lua",
