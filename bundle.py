@@ -8,9 +8,13 @@ ITERATIONS_LIMIT = 64
 
 REQUIRE_STATEMENT = re.compile("(require\s*(?:[\',\"](.+)[\',\"]|\(*\s*[\',\"](.+)[\',\"]\s*\)+))")
 FILE_WITH_EXTENSION = re.compile("(.+)\.+(.+)")
-WRAPPED_MODULE_CODE_FORMAT = """(function()
+BUNDLE_PREFIX = """local function __call(f)
+  return f()
+end
+"""
+WRAPPED_MODULE_CODE_FORMAT = """__call(function()
   {0}
-end)()"""
+end)"""
 
 def replace_last_occurance_of_substring(string, substring, replacement):
   if substring not in string: return string
@@ -70,7 +74,7 @@ def get_bundle_path(file_path):
 def get_bundle_code(file_path):
   lua_code = read_file(file_path)
   project_root = get_file_directory(file_path)
-  return replace_every_require_statement_with_referenced_module_code(lua_code, project_root)
+  return BUNDLE_PREFIX + replace_every_require_statement_with_referenced_module_code(lua_code, project_root)
 
 def create_bundle(file_path):
   bundle_path = get_bundle_path(file_path)
@@ -81,4 +85,3 @@ if __name__ == "__main__":
   file_path = sys.argv[1]
   if file_path:
     create_bundle(file_path)
-  os.system("pause")
