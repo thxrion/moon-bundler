@@ -1,9 +1,0 @@
-local module1 = require("module1")
-local module2 = require('module2')
-local module3 = require"module3"
-local module4 = require'module4'
-local module5 = require "module5"
-local module6 = require  'module6'
-local module7 = require  ("module7")
-local module8 = require  (  'module8')
-local module9 = require  (("module9" ))
