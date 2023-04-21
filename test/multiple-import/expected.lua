@@ -1,6 +1,4 @@
-local function __require(module)
-    return module()
-end
+local function __require(f) return f() end
 __require(function()
 __require(function()
 return 3

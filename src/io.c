@@ -3,7 +3,7 @@
 
 char* file_read(const char* path) {
     FILE* file = fopen(path, "r");
-    if (file == NULL) {
+    if (!file) {
         return NULL;
     }
 
@@ -18,4 +18,10 @@ char* file_read(const char* path) {
     string[file_size] = '\0';
 
     return string;
+}
+
+void file_write(const char* path, const char* string) {
+    FILE* file = fopen(path, "w");
+    fputs(string, file);
+    fclose(file);
 }
