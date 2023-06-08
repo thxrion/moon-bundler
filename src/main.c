@@ -1,24 +1,36 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+
 #include "io.h"
 #include "template.h"
+#include "errors.h"
+
+#define BUFFER_SIZE 256
 
 const char* DEFAULT_BUNDLE_DIRECTORY = "build";
-const char* DEFAULT_WORKING_DIRECTORY = "src";
+const char* DEFAULT_SOURCE_DIRECTORY = "src";
 const char* DEFAULT_ENTRY_POINT = "main";
 
 static char* bundle_directory;
-static char* working_directory;
+static char* source_directory;
 static char* entry_point;
 static char* target;
 
+
 int main(int argc, char *argv[]) {
-    printf("args count: %d\n", argc - 1);
+    char working_directory[BUFFER_SIZE];
+    if (getcwd(working_directory, BUFFER_SIZE) == NULL) {    
+        print_getcwd_errors();
+        return EXIT_FAILURE;
+    }
+
+    printf("working directory: %s\n", working_directory);
 
     if (argc < 1) {
         // look for config
     }
-
 
     for (size_t i = 1; i < argc - 1; i++) {
         char* argument = argv[i];
@@ -29,8 +41,8 @@ int main(int argc, char *argv[]) {
             continue;
         }
 
-        if (!strcmp(argument, "--working-directory")) {
-            working_directory = strdup(next_argument);
+        if (!strcmp(argument, "--source-directory")) {
+            source_directory = strdup(next_argument);
             continue;
         }
 
@@ -49,8 +61,8 @@ int main(int argc, char *argv[]) {
         bundle_directory = strdup(DEFAULT_BUNDLE_DIRECTORY);
     }
 
-    if (!working_directory) {
-        working_directory = strdup(DEFAULT_WORKING_DIRECTORY);
+    if (!source_directory) {
+        source_directory = strdup(DEFAULT_SOURCE_DIRECTORY);
     }
 
     if (!entry_point) {
@@ -58,32 +70,39 @@ int main(int argc, char *argv[]) {
     }
 
     if (!target) {
-        printf("Target not specified, please use --target <name>\n");
+        print_target_not_found_error();
 
         free(bundle_directory);
-        free(working_directory);
+        free(source_directory);
         free(entry_point);
 
         return EXIT_FAILURE;
     }
 
     printf("bundle directory: %s\n", bundle_directory);
-    printf("working directory: %s\n", working_directory);
+    printf("source directory: %s\n", source_directory);
     printf("entry point: %s\n", entry_point);
     printf("target: %s\n", target);
 
-    /* char* file_content = file_read("");
+    char absolute_path[BUFFER_SIZE];
+    sprintf(absolute_path, "%s\\%s\\%s.lua", working_directory, source_directory, entry_point);
+
+    char* file_content = file_read(absolute_path);
     if (!file_content) {
+        free(bundle_directory);
+        free(source_directory);
+        free(entry_point);
+        free(target);
+        
         return EXIT_FAILURE;
     }
 
     printf("%s", file_content);
     file_write("", file_content);
     free(file_content);
-    */
 
     free(bundle_directory);
-    free(working_directory);
+    free(source_directory);
     free(entry_point);
     free(target);
 
