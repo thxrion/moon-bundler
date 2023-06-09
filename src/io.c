@@ -1,5 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include "io.h"
 
 char* file_read(const char* path) {
     FILE* file = fopen(path, "r");
