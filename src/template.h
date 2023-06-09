@@ -1,4 +1,4 @@
-static const char* BUNDLE_PREFIX =
+const char* BUNDLE_PREFIX =
     "__MODULES = {}\n"
     "\n"
     "local __require = require\n"
@@ -11,7 +11,7 @@ static const char* BUNDLE_PREFIX =
     "\treturn __require(path)\n"
     "end\n";
 
-static const char* MODULE_DEFINITION = 
+const char* MODULE_DEFINITION = 
     "__MODULES[\"%s\"] = function()\n"
     "%s\n"
     "end\n";
