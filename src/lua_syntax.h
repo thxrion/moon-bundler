@@ -15,3 +15,7 @@ const char* MODULE_DEFINITION =
     "__MODULES[\"%s\"] = function()\n"
     "%s\n"
     "end\n";
+
+const char* require_keyword = "require";
+const char* opening_quotes[] = {"'", "\"", "[["};
+const char* closing_quotes[] = {"'", "\"", "]]"};
