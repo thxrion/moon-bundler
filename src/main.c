@@ -61,7 +61,7 @@ void config_init(void) {
     if (!config_source_directory) {
         config_source_directory = malloc(PATH_MAX);
         getcwd(config_source_directory, PATH_MAX);
-        strcat(config_source_directory, "/test/general/project");
+        strcat(config_source_directory, "/test/deep-import/project");
     }
 
     if (!config_entry_point) {
@@ -120,36 +120,30 @@ char* read_module_code(const char* lua_path) {
     char* module_as_folder_absolute_path = get_source_file_absolute_path(file_relative_path, "/init.lua");
     char* module_as_file_absolute_path = get_source_file_absolute_path(file_relative_path, ".lua");
 
-    free(file_relative_path);
+    char* module_code = NULL;
 
     if (!access(module_as_folder_absolute_path, F_OK)) {
-        char* module_code = file_read(module_as_folder_absolute_path);
-        free(module_as_folder_absolute_path);
-        free(module_as_file_absolute_path);
-
-        return module_code;
+        module_code = file_read(module_as_folder_absolute_path);
     }
 
-    if (!access(module_as_file_absolute_path, F_OK)) {
-        char* module_code = file_read(module_as_file_absolute_path);
-        free(module_as_folder_absolute_path);
-        free(module_as_file_absolute_path);
-
-        return module_code;
+    if (!module_code && !access(module_as_file_absolute_path, F_OK)) {
+        module_code = file_read(module_as_file_absolute_path);
     }
 
-    return NULL;
+    free(module_as_folder_absolute_path);
+    free(module_as_file_absolute_path);
+    free(file_relative_path);
+
+    return module_code;
 }
 
-char* get_module_definition(const char* lua_path, const char* module_code) {
-    size_t module_definition_len = strlen(MODULE_DEFINITION) + strlen(lua_path) + strlen(module_code) - 2 * sizeof("%s") + 1;
-    char* module_definition_code = malloc(module_definition_len);
-    sprintf(module_definition_code, MODULE_DEFINITION, lua_path, module_code);
+void look_for_require_statements_in_lua_module(string_set_t* modules, const char* path) {
+    char* lua_code = read_module_code(path);
 
-    return module_definition_code;
-}
+    if (!lua_code) {
+        return;
+    }
 
-void look_for_require_statements_in_lua_code(const char* lua_code) {
     const char* curr_pos = lua_code;
     while ((curr_pos = strstr(curr_pos, require_keyword)) != NULL) {
         curr_pos += strlen(require_keyword);
@@ -170,7 +164,7 @@ void look_for_require_statements_in_lua_code(const char* lua_code) {
         }
 
         if (!opening_quote_pos) {
-            return;
+            break;
         }
 
         curr_pos = opening_quote_pos + strlen(opening_quotes[quote_index]);
@@ -178,71 +172,51 @@ void look_for_require_statements_in_lua_code(const char* lua_code) {
         const char* closing_quote_pos = strstr(curr_pos, closing_quotes[quote_index]);
         if (!closing_quote_pos) {
             printf("Found unclosed quote after 'require' statement.\n");
-            return;
+            break;
         }
 
-        size_t lua_modules_path_len = closing_quote_pos - curr_pos;
-        char* lua_modules_path = malloc(lua_modules_path_len + 1);
-        strncpy(lua_modules_path, curr_pos, lua_modules_path_len);
-        lua_modules_path[lua_modules_path_len] = '\0';
+        size_t lua_module_path_len = closing_quote_pos - curr_pos;
+        char* lua_module_path = malloc(lua_module_path_len + 1);
+        strncpy(lua_module_path, curr_pos, lua_module_path_len);
+        lua_module_path[lua_module_path_len] = '\0';
 
-        string_set_add(&modules, lua_modules_path);
+        if (!string_set_contains(modules, lua_module_path)) {
+            string_set_add(modules, lua_module_path);
+            look_for_require_statements_in_lua_module(modules, lua_module_path);
+        }
+
+        free(lua_module_path);
 
         curr_pos = closing_quote_pos + strlen(closing_quotes[quote_index]);
     }
+
+    free(lua_code);
 }
 
-void process_lua_files_and_shit(const char* lua_code, size_t initial_size) {
-    look_for_require_statements_in_lua_code(lua_code);
+char* get_module_definition(const char* lua_path, const char* module_code) {
+    size_t module_definition_len = strlen(MODULE_DEFINITION) + strlen(lua_path) + strlen(module_code) - 2 * sizeof("%s") + 1;
+    char* module_definition_code = malloc(module_definition_len);
+    sprintf(module_definition_code, MODULE_DEFINITION, lua_path, module_code);
 
-    for (size_t i = initial_size; i < modules.size; i++) {
-        const char* lua_path = modules.elements[i];
-        char* module_code = read_module_code(lua_path);
-        char* module_definition = get_module_definition(lua_path, module_code);
-        free(module_code);
-        printf("%s\n", module_definition);
-        free(module_definition);
-    }
-
-    if (modules.size == initial_size) {
-        return;
-    }
-
-    process_lua_files_and_shit(lua_code, modules.size);
+    return module_definition_code;
 }
 
 int main(int argc, char *argv[]) {
     config_read_arguments(argc, argv);
     config_init();
 
-    printf("%s\n", config_source_directory);
-
     /*if (!config_target) {
         config_free();
         return EXIT_FAILURE;
     }*/
-
-    char* main_module_path = get_source_file_absolute_path(config_entry_point, ".lua");
-
-    if (access(main_module_path, F_OK)) {
-        free(main_module_path);
-        config_free();
-        return EXIT_FAILURE;
-    }
-
-    char* main_module_code = file_read(main_module_path);
-
-    printf("%s\n", main_module_code);
-
     
     string_set_init(&modules, INITIAL_MODULES_CAPACITY);
 
-    process_lua_files_and_shit(main_module_code, 0);
+    look_for_require_statements_in_lua_module(&modules, config_entry_point);
+
     string_set_print(&modules);
     string_set_clear(&modules);
 
-    free(main_module_path);
-    free(main_module_code);
     config_free();
 
     return EXIT_SUCCESS;
