@@ -11,7 +11,7 @@ const char* BUNDLE_PREFIX =
     "\treturn __require(path)\n"
     "end\n";
 
-const char* MODULE_DEFINITION = 
+const char* MODULE_DEFINITION =
     "__MODULES[\"%s\"] = function()\n"
     "%s\n"
     "end\n";

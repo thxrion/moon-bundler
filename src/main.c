@@ -193,7 +193,13 @@ void look_for_require_statements_in_lua_module(string_set_t* modules, const char
     free(lua_code);
 }
 
-char* get_module_definition(const char* lua_path, const char* module_code) {
+char* get_module_definition(const char* lua_path) {
+    char* module_code = read_module_code(lua_path);
+
+    if (!module_code) {
+        return NULL;
+    }
+
     size_t module_definition_len = strlen(MODULE_DEFINITION) + strlen(lua_path) + strlen(module_code) - 2 * sizeof("%s") + 1;
     char* module_definition_code = malloc(module_definition_len);
     sprintf(module_definition_code, MODULE_DEFINITION, lua_path, module_code);
@@ -209,12 +215,49 @@ int main(int argc, char *argv[]) {
         config_free();
         return EXIT_FAILURE;
     }*/
-    
+
     string_set_init(&modules, INITIAL_MODULES_CAPACITY);
 
     look_for_require_statements_in_lua_module(&modules, config_entry_point);
+    string_set_add(&modules, config_entry_point);
 
     string_set_print(&modules);
+
+    char* modules_code[modules.size + 1];
+    size_t bundle_len = strlen(BUNDLE_PREFIX);
+
+    for (size_t i = 0; i < modules.size; i++) {
+        modules_code[i] = get_module_definition(modules.elements[i]);
+
+        if (modules_code[i]) {
+            bundle_len += strlen(modules_code[i]);
+        }
+    }
+
+    char* bundle = malloc(bundle_len + 1);
+
+    strncpy(bundle, BUNDLE_PREFIX, strlen(BUNDLE_PREFIX));
+
+    for (size_t i = 0, next_string_segment = strlen(BUNDLE_PREFIX); i < modules.size; i++) {
+        const char* module_code = modules_code[i];
+        if (!module_code) {
+            continue;
+        }
+
+        int module_code_len = strlen(module_code);
+
+        strncpy(bundle + next_string_segment, module_code, module_code_len);
+        next_string_segment += module_code_len;
+    }
+
+    bundle[bundle_len] = '\0';
+
+    printf("%s\n", bundle);
+
+    file_write("bin/target.lua", bundle);
+
+    free(bundle);
+
     string_set_clear(&modules);
 
     config_free();
