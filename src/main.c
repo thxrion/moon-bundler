@@ -6,6 +6,7 @@
 #include <sys/stat.h>
 
 #include "lua_syntax.h"
+#include "io.h"
 #include "string_set.h"
 
 #define INITIAL_MODULES_CAPACITY 256
@@ -83,28 +84,6 @@ void replace_char_in_string(char* string, char old_char, char new_char) {
         *ptr = new_char;
         ptr = strchr(ptr + 1, old_char);
     }
-}
-
-void file_write(const char* path, const char* string) {
-    FILE* file = fopen(path, "w");
-    fputs(string, file);
-    fclose(file);
-}
-
-char* file_read(const char* path) {
-    FILE* file = fopen(path, "r");
-
-    fseek(file, 0, SEEK_END);
-    long file_size = ftell(file);
-    fseek(file, 0, SEEK_SET);
-
-    char* string = malloc(file_size + 1);
-    fread(string, file_size, 1, file);
-    fclose(file);
-
-    string[file_size] = '\0';
-
-    return string;
 }
 
 char* get_source_file_absolute_path(const char* file_relative_path, const char* modifier) {
