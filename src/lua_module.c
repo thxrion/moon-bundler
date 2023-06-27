@@ -25,15 +25,6 @@ void lua_module_free(lua_module_t module) {
     free(module.code);
 }
 
-void lua_module_print(const lua_module_t module) {
-    if (!lua_module_check_if_valid(module)) {
-        printf("Module [%s]:\nNot valid", module.path);
-        return;
-    }
-
-    printf("Module [%s]:\n%s\n", module.path, module.code);
-}
-
 char* lua_module_read_code_by_path(const char* source_directory, const char* lua_path) {
     char* module_relative_path = strdup(lua_path);
     lua_require_path_format(module_relative_path);

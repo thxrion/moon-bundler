@@ -36,16 +36,6 @@ void lua_module_list_add(lua_module_list_t* list, lua_module_t module) {
     list->size++;
 }
 
-void lua_module_list_print(const lua_module_list_t* list) {
-    printf("size: %ld\n", list->size);
-    printf("capacity: %ld\n", list->capacity);
-    printf("list:\n");
-
-    for (size_t i = 0; i < list->size; i++) {
-        lua_module_print(list->elements[i]);
-    }
-}
-
 void lua_module_list_free(lua_module_list_t* list) {
     for (size_t i = 0; i < list->size; i++) {
         lua_module_free(list->elements[i]);

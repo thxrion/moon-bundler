@@ -1,0 +1,21 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+#include <stdlib.h>
+
+#define DEFAULT_BUNDLE_DIRECTORY "bundle"
+#define DEFAULT_SOURCE_DIRECTORY "src"
+#define DEFAULT_ENTRY_POINT "init"
+#define DEFAULT_TARGET "script.lua"
+
+typedef struct {
+    char* bundle_directory;
+    char* source_directory;
+    char* entry_point;
+    char* target;
+} config_t;
+
+void config_process_arguments(config_t* config, size_t argc, char* argv[]);
+void config_free(config_t* free);
+
+#endif
