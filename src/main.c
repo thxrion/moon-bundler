@@ -77,45 +77,6 @@ void config_free(void) {
     free(config_target);
 }
 
-void replace_char_in_string(char* string, char old_char, char new_char) {
-    char *ptr = strchr(string, old_char);
-
-    while (ptr != NULL) {
-        *ptr = new_char;
-        ptr = strchr(ptr + 1, old_char);
-    }
-}
-
-char* get_source_file_absolute_path(const char* file_relative_path, const char* modifier) {
-    char* source_file_path = malloc(strlen(config_source_directory) + strlen("/") + strlen(file_relative_path) + strlen(modifier) + 1);
-    sprintf(source_file_path, "%s/%s%s", config_source_directory, file_relative_path, modifier);
-    return source_file_path;
-}
-
-char* read_module_code(const char* lua_path) {
-    char* file_relative_path = strdup(lua_path);
-    replace_char_in_string(file_relative_path, '.', '/');
-
-    char* module_as_folder_absolute_path = get_source_file_absolute_path(file_relative_path, "/init.lua");
-    char* module_as_file_absolute_path = get_source_file_absolute_path(file_relative_path, ".lua");
-
-    char* module_code = NULL;
-
-    if (!access(module_as_folder_absolute_path, F_OK)) {
-        module_code = file_read(module_as_folder_absolute_path);
-    }
-
-    if (!module_code && !access(module_as_file_absolute_path, F_OK)) {
-        module_code = file_read(module_as_file_absolute_path);
-    }
-
-    free(module_as_folder_absolute_path);
-    free(module_as_file_absolute_path);
-    free(file_relative_path);
-
-    return module_code;
-}
-
 void look_for_require_statements_in_lua_module(string_set_t* modules, const char* path) {
     char* lua_code = read_module_code(path);
 
@@ -170,20 +131,6 @@ void look_for_require_statements_in_lua_module(string_set_t* modules, const char
     }
 
     free(lua_code);
-}
-
-char* get_module_definition(const char* lua_path) {
-    char* module_code = read_module_code(lua_path);
-
-    if (!module_code) {
-        return NULL;
-    }
-
-    size_t module_definition_len = strlen(MODULE_DEFINITION) + strlen(lua_path) + strlen(module_code) - 2 * sizeof("%s") + 1;
-    char* module_definition_code = malloc(module_definition_len);
-    sprintf(module_definition_code, MODULE_DEFINITION, lua_path, module_code);
-
-    return module_definition_code;
 }
 
 int main(int argc, char *argv[]) {
