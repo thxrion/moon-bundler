@@ -1,13 +1,12 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <limits.h>
-#include <sys/stat.h>
 
+#include "io.h"
+#include "lua_syntax.h"
 #include "lua_module_list.h"
 
-#define PATH_MAX 4096
 #define INITIAL_MODULES_CAPACITY 256
 
 // args --bundle-directory "path"
