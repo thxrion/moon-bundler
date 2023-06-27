@@ -1,4 +1,4 @@
-const char* BUNDLE_PREFIX =
+const char* lua_bundle_prefix =
     "__MODULES = {}\n"
     "\n"
     "local __require = require\n"
@@ -14,11 +14,11 @@ const char* BUNDLE_PREFIX =
 const char* lua_module_template =
     "__MODULES[\"%s\"] = function()\n"
     "%s\n"
-    "end\n";
+    "end\n\n";
 
-const char* require_keyword = "require";
-const char* opening_quotes[] = { "'", "\"", "[[" };
-const char* closing_quotes[] = { "'", "\"", "]]" };
+const char* lua_require_keyword = "require";
+const char* lua_opening_quotes[] = { "'", "\"", "[[" };
+const char* lua_closing_quotes[] = { "'", "\"", "]]" };
 
 const char* lua_require_path_suffixes[] = { "/init.lua", ".lua" };
 
