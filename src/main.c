@@ -8,6 +8,14 @@
 #include "lua_syntax.h"
 #include "lua_module_list.h"
 
+#ifdef _WIN32
+    #include <direct.h>
+    #define makedir(path) _mkdir(path)
+#else
+    #include <sys/stat.h>
+    #define makedir(path) mkdir(path, 0777)
+#endif
+
 #define INITIAL_MODULES_CAPACITY 256
 
 int main(int argc, char *argv[]) {
@@ -22,6 +30,10 @@ int main(int argc, char *argv[]) {
     }
 
     config_put_default_values(config);
+
+    if (access(config->bundle_directory, F_OK)) {
+        makedir(config->bundle_directory);
+    }
 
     lua_module_list_t* modules = lua_module_list_new(INITIAL_MODULES_CAPACITY);
     lua_module_list_generate(modules, config->source_directory, config->entry_point);
