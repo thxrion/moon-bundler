@@ -17,7 +17,7 @@ typedef struct {
     char* target;
 } config_t;
 
-void config_build(config_t* config);
+config_t* config_new(void);
 void config_process_arguments(config_t* config, size_t argc, char* argv[]);
 void config_put_default_values(config_t* config);
 void config_free(config_t* config);

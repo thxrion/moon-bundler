@@ -3,7 +3,6 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "io.h"
 #include "lua_module.h"
 #include "lua_syntax.h"
 
@@ -40,18 +39,24 @@ char* lua_module_read_code_by_path(const char* source_directory, const char* lua
             continue;
         }
 
-        /*
-        printf("lua_module_read_code_by_path('%s')\n\n", module_path);
-        */
+        FILE* file = fopen(module_path, "r");
 
-        return file_read(module_path);
+        fseek(file, 0, SEEK_END);
+        long file_size = ftell(file);
+        fseek(file, 0, SEEK_SET);
+
+        char* code = malloc(file_size + 1);
+        fread(code, file_size, 1, file);
+        fclose(file);
+
+        code[file_size] = '\0';
+
+        return code;
     }
 
     return NULL;
 }
 
-char* lua_module_get_definition(lua_module_t module) {
-    char* definition = malloc(strlen(lua_module_template) + strlen(module.path) + strlen(module.code) - 2 * sizeof("%s") + 1);
-    sprintf(definition, lua_module_template, module.path, module.code);
-    return definition;
+int lua_module_write(FILE* file, lua_module_t module) {
+    return fprintf(file, lua_module_template, module.path, module.code);
 }

@@ -4,10 +4,14 @@
 #include "lua_syntax.h"
 #include "lua_module_list.h"
 
-void lua_module_list_build(lua_module_list_t* list, const size_t initial_capacity) {
+lua_module_list_t* lua_module_list_new(const size_t initial_capacity) {
+    lua_module_list_t* list = malloc(sizeof(lua_module_list_t));
+
     list->capacity = initial_capacity;
     list->elements = malloc(initial_capacity * sizeof(lua_module_t));
     list->size = 0;
+
+    return list;
 }
 
 bool lua_module_list_contains(lua_module_list_t* list, char* lua_path) {
@@ -42,6 +46,7 @@ void lua_module_list_free(lua_module_list_t* list) {
     }
 
     free(list->elements);
+    free(list);
 }
 
 void lua_module_list_generate(lua_module_list_t* list, const char* source_directory, char* lua_path) {

@@ -11,7 +11,7 @@ typedef struct {
     size_t capacity;
 } lua_module_list_t;
 
-void lua_module_list_build(lua_module_list_t* list, const size_t initial_capacity);
+lua_module_list_t* lua_module_list_new(const size_t initial_capacity);
 bool lua_module_list_contains(lua_module_list_t* list, char* lua_path);
 void lua_module_list_resize(lua_module_list_t* list, const size_t new_capacity);
 void lua_module_list_add(lua_module_list_t* list, lua_module_t module);

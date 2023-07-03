@@ -3,7 +3,6 @@
 #include <unistd.h>
 #include <limits.h>
 
-#include "io.h"
 #include "config.h"
 
 #define MAX_LINE_LENGTH 256
@@ -13,11 +12,15 @@
 // args --entry-point "path"
 // args --target "name"
 
-void config_build(config_t* config) {
+config_t* config_new(void) {
+    config_t* config = malloc(sizeof(config_t));
+
     config->bundle_directory = NULL;
     config->source_directory = NULL;
     config->entry_point = NULL;
     config->target = NULL;
+
+    return config;
 }
 
 void config_process_arguments(config_t* config, size_t argc, char* argv[]) {
@@ -80,6 +83,7 @@ void config_free(config_t* config) {
     free(config->source_directory);
     free(config->entry_point);
     free(config->target);
+    free(config);
 }
 
 char* config_file_find_entry(const char* path, const char* key) {
