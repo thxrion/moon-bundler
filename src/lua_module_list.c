@@ -50,11 +50,14 @@ void lua_module_list_generate(lua_module_list_t* list, const char* source_direct
         .code = lua_module_read_code_by_path(source_directory, lua_path),
     };
 
+    // printf("path: %s, code:\n%s\n", module.path, module.code);
+
     if (!lua_module_check_if_valid(module)) {
         return;
     }
 
     lua_module_list_add(list, module);
+    // printf("module added: %s,\n%s\n", module.path, module.code);
 
     char* curr_pos = module.code;
 

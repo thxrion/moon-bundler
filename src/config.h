@@ -8,6 +8,8 @@
 #define DEFAULT_ENTRY_POINT "init"
 #define DEFAULT_TARGET "script.lua"
 
+#define CONFIG_FILE_NAME ".bundle.cfg"
+
 typedef struct {
     char* bundle_directory;
     char* source_directory;
@@ -15,7 +17,10 @@ typedef struct {
     char* target;
 } config_t;
 
+void config_build(config_t* config);
 void config_process_arguments(config_t* config, size_t argc, char* argv[]);
-void config_free(config_t* free);
+void config_put_default_values(config_t* config);
+void config_free(config_t* config);
+void config_process_file(config_t* config);
 
 #endif

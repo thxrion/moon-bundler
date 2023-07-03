@@ -28,7 +28,6 @@ void lua_module_free(lua_module_t module) {
 char* lua_module_read_code_by_path(const char* source_directory, const char* lua_path) {
     char module_relative_path[strlen(lua_path) + 1];
     strcpy(module_relative_path, lua_path);
-
     lua_require_path_format(module_relative_path);
 
     for (size_t i = 0; i < sizeof(lua_require_path_suffixes) / sizeof(*lua_require_path_suffixes); i++) {
@@ -40,6 +39,10 @@ char* lua_module_read_code_by_path(const char* source_directory, const char* lua
         if (access(module_path, F_OK)) {
             continue;
         }
+
+        /*
+        printf("lua_module_read_code_by_path('%s')\n\n", module_path);
+        */
 
         return file_read(module_path);
     }
