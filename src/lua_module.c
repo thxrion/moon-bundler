@@ -35,6 +35,7 @@ char* lua_module_read_code_by_path(const char* source_directory, const char* lua
         char module_path[strlen(source_directory) + strlen("/") + strlen(module_relative_path) + strlen(suffix) + 1];
         sprintf(module_path, "%s/%s%s", source_directory, module_relative_path, suffix);
 
+        // TODO: add directory check, make sure this is cross platform
         if (access(module_path, F_OK)) {
             continue;
         }

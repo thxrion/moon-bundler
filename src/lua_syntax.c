@@ -24,7 +24,7 @@ const char* lua_require_keyword = "require";
 const char* lua_opening_quotes[] = { "'", "\"", "[[" };
 const char* lua_closing_quotes[] = { "'", "\"", "]]" };
 
-const char* lua_require_path_suffixes[] = { "/init.lua", ".lua" };
+const char* lua_require_path_suffixes[] = { "", "/init.lua", ".lua" };
 
 void lua_require_path_format(char* lua_path) {
     char *ptr = strchr(lua_path, '.');

@@ -24,12 +24,17 @@ int main(int argc, char *argv[]) {
     // printf("arguments size: %d\n", argc);
 
     if (argc > 1) {
+        // printf("parsing args\n");
         config_process_arguments(config, argc, argv);
     } else {
         config_process_file(config);
     }
 
-    config_put_default_values(config);
+    // config_put_default_values(config);
+    printf("source dir: %s\n", config->source_directory);
+    printf("bundle dir: %s\n", config->bundle_directory);
+    printf("target: %s\n", config->target);
+    printf("entry point: %s\n", config->entry_point);
 
     if (access(config->bundle_directory, F_OK)) {
         makedir(config->bundle_directory);

@@ -23,28 +23,44 @@ config_t* config_new(void) {
     return config;
 }
 
+char* substrdup(const char* source, size_t start_index, size_t end_index) {
+    size_t substr_len = end_index - start_index;
+    char* result = malloc(substr_len + 1);
+    strncpy(result, source + start_index, substr_len);
+    result[substr_len] = '\0';
+
+    return result;
+}
+
+
 void config_process_arguments(config_t* config, size_t argc, char* argv[]) {
     for (size_t i = 1; i < argc - 1; i++) {
         char* argument = argv[i];
         char* next_argument = argv[i + 1];
 
-        if (!strcmp(argument, "--source-directory")) {
-            config->source_directory = strdup(next_argument);
+        if (!strcmp(argument, "--input")) {
+            char* last_separator = strrchr(next_argument, '/');
+            if (!last_separator) {
+                config->entry_point = strdup(next_argument);
+                continue;
+            };
+
+            size_t directory_len = last_separator - next_argument;
+            config->source_directory = substrdup(next_argument, 0, directory_len);
+            config->entry_point = substrdup(next_argument, directory_len + strlen("/"), strlen(next_argument));
             continue;
         }
 
-        if (!strcmp(argument, "--bundle-directory")) {
-            config->bundle_directory = strdup(next_argument);
-            continue;
-        }
+        if (!strcmp(argument, "--output")) {
+            char* last_separator = strrchr(next_argument, '/');
+            if (!last_separator) {
+                config->target = strdup(next_argument);
+                continue;
+            };
 
-        if (!strcmp(argument, "--entry-point")) {
-            config->entry_point = strdup(next_argument);
-            continue;
-        }
-
-        if (!strcmp(argument, "--target")) {
-            config->target = strdup(next_argument);
+            size_t directory_len = last_separator - next_argument;
+            config->bundle_directory = substrdup(next_argument, 0, directory_len);
+            config->target = substrdup(next_argument, directory_len + strlen("/"), strlen(next_argument));
             continue;
         }
     }
