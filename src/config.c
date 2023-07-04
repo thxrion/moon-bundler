@@ -32,7 +32,7 @@ char* substrdup(const char* source, size_t start_index, size_t end_index) {
     return result;
 }
 
-
+// TODO: mb try refactor to process one iteration at a time and loop in main?
 void config_process_arguments(config_t* config, size_t argc, char* argv[]) {
     for (size_t i = 1; i < argc - 1; i++) {
         char* argument = argv[i];
@@ -47,6 +47,7 @@ void config_process_arguments(config_t* config, size_t argc, char* argv[]) {
 
             size_t directory_len = last_separator - next_argument;
             config->source_directory = substrdup(next_argument, 0, directory_len);
+            // TODO: use regular strdup
             config->entry_point = substrdup(next_argument, directory_len + strlen("/"), strlen(next_argument));
             continue;
         }
@@ -60,6 +61,7 @@ void config_process_arguments(config_t* config, size_t argc, char* argv[]) {
 
             size_t directory_len = last_separator - next_argument;
             config->bundle_directory = substrdup(next_argument, 0, directory_len);
+            // TODO: use regular strdup
             config->target = substrdup(next_argument, directory_len + strlen("/"), strlen(next_argument));
             continue;
         }
