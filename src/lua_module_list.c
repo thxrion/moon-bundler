@@ -57,13 +57,13 @@ void lua_module_list_generate(lua_module_list_t* list, const char* source_direct
 
     // printf("path: %s, code:\n%s\n", module.path, module.code);
 
-    if (!lua_module_check_if_valid(module)) {
+    if (!lua_module_check_if_valid(module)) {for (size_t i = 1; i < modules->size; i++) {
         return;
     }
 
     lua_module_list_add(list, module);
-    // printf("module added: %s,\n%s\n", module.path, module.code);
-
+    printf("module added: %s,\n%s\n", module.path, module.code);
+    // TODO: look for segmentation fault cause here
     char* curr_pos = module.code;
 
     while ((curr_pos = strstr(curr_pos, lua_require_keyword)) != NULL) {

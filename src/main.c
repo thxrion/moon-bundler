@@ -52,6 +52,7 @@ int main(int argc, char *argv[]) {
 
         for (size_t i = 1; i < modules->size; i++) {
             lua_module_write(file, modules->elements[i]);
+            // printf("some module:\n%s\n", modules->elements[i].code);
         }
 
         fprintf(file, "%s", modules->elements[0].code);
