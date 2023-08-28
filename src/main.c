@@ -21,7 +21,9 @@
 int main(int argc, char *argv[]) {
     config_t* config = config_new();
 
-    // printf("arguments size: %d\n", argc);
+    printf("Why are you runnin, why are you runnin\n");
+    printf("arguments size: %d\n", argc);
+    printf("%s\n", argv[1]);
 
     if (argc > 1) {
         // printf("parsing args\n");
