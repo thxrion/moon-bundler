@@ -97,6 +97,8 @@ void config_free(config_t* config) {
 char* config_file_find_entry(const char* path, const char* key) {
     FILE* file = fopen(path, "r");
 
+    // TODO: add not found check
+
     char line[MAX_LINE_LENGTH];
 
     while (fgets(line, sizeof(line), file) != NULL) {

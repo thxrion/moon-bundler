@@ -2,7 +2,7 @@ set -e
 
 EXECUTABLE="bin/bundler.exe"
 
-TESTS=$(find test/* -maxdepth 0 -type d -exec basename {} \;)
+TESTS=$(find tests/* -maxdepth 0 -type d -exec basename {} \;)
 
 if [ ! -x "$EXECUTABLE" ]; then
     echo "Executable not found at $EXECUTABLE"
@@ -11,5 +11,5 @@ fi
 
 for test in $TESTS; do
     echo "Running test: $test"
-    (cd "test/$test" && "../../$EXECUTABLE")
+    (cd "tests/$test" && "../../$EXECUTABLE")
 done

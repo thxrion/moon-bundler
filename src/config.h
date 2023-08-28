@@ -8,7 +8,7 @@
 #define DEFAULT_ENTRY_POINT "init"
 #define DEFAULT_TARGET "script.lua"
 
-#define CONFIG_FILE_NAME ".bundle.cfg"
+#define CONFIG_FILE_NAME "bundle.cfg"
 
 typedef struct {
     char* bundle_directory;
