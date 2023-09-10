@@ -12,19 +12,8 @@
 #define INITIAL_MODULES_CAPACITY 256
 
 int main(int argc, char *argv[]) {
-    printf("LOG START\n");
-
     config_t* config = config_new();
     config_process_file(config);
-
-    char cwd[256];
-    getcwd(cwd, 256);
-    printf("workin dir: %s\n", cwd);
-    // config_put_default_values(config);
-    printf("source dir: %s\n", config->source_directory);
-    printf("bundle dir: %s\n", config->bundle_directory);
-    printf("target: %s\n", config->target);
-    printf("entry point: %s\n\n", config->entry_point);
 
     if (access(config->bundle_directory, F_OK)) {
         makedir(config->bundle_directory);
@@ -43,7 +32,6 @@ int main(int argc, char *argv[]) {
 
         for (size_t i = 1; i < modules->size; i++) {
             lua_module_write(file, modules->elements[i]);
-            // printf("some module:\n%s\n", modules->elements[i].code);
         }
 
         fprintf(file, "%s", modules->elements[0].code);

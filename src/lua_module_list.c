@@ -38,8 +38,6 @@ void lua_module_list_add(lua_module_list_t* list, lua_module_t module) {
 
     list->elements[list->size] = lua_module_duplicate(module);
     list->size++;
-
-    printf("addin module: %s\n", module.path);
 }
 
 void lua_module_list_free(lua_module_list_t* list) {
@@ -52,25 +50,17 @@ void lua_module_list_free(lua_module_list_t* list) {
 }
 
 void lua_module_list_generate(lua_module_list_t* list, const char* source_directory, char* lua_path) {
-    printf("lua module list generate entered\n");
-    printf("lua path: %s\n", lua_path);
     lua_module_t module = {
         .path = lua_path,
         .code = lua_module_read_code_by_path(source_directory, lua_path),
     };
 
-    printf("some module - (%s)\ncode:\n%s\n", module.path, module.code);
-
     if (!lua_module_check_if_valid(module)) {
         return;
     }
 
-    printf("module valid\n");
-
     lua_module_list_add(list, module);
 
-    printf("module added: %s\n", module.path);
-    // TODO: look for segmentation fault cause here
     char* curr_pos = module.code;
 
     while ((curr_pos = strstr(curr_pos, lua_require_keyword)) != NULL) {
@@ -101,7 +91,6 @@ void lua_module_list_generate(lua_module_list_t* list, const char* source_direct
         char* closing_quote_pos = strstr(curr_pos, lua_closing_quotes[quote_index]);
 
         if (!closing_quote_pos) {
-            printf("Found unclosed quote after 'require' statement.\n");
             break;
         }
 
@@ -110,10 +99,7 @@ void lua_module_list_generate(lua_module_list_t* list, const char* source_direct
         strncpy(lua_submodule_path, curr_pos, lua_submodule_path_len);
         lua_submodule_path[lua_submodule_path_len] = '\0';
 
-        printf("lua submodule found: %s\n", lua_submodule_path);
-
         if (!lua_module_list_contains(list, lua_submodule_path)) {
-            printf("recursion entered\n");
             lua_module_list_generate(list, source_directory, lua_submodule_path);
         }
 

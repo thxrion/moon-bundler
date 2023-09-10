@@ -25,12 +25,9 @@ void lua_module_free(lua_module_t module) {
 }
 
 char* lua_module_read_code_by_path(const char* source_directory, const char* lua_path) {
-    printf("readin module code by path\n");
     char module_relative_path[strlen(lua_path) + 1];
     strcpy(module_relative_path, lua_path);
     lua_require_path_format(module_relative_path);
-    printf("module relative path: %s\n", module_relative_path);
-    printf("lua path: %s - lookin here\n", lua_path);
 
     for (size_t i = 0; i < sizeof(lua_require_path_suffixes) / sizeof(*lua_require_path_suffixes); i++) {
         const char* suffix = lua_require_path_suffixes[i];
@@ -38,14 +35,10 @@ char* lua_module_read_code_by_path(const char* source_directory, const char* lua
         char module_path[strlen(source_directory) + strlen("/") + strlen(module_relative_path) + strlen(suffix) + 1];
         sprintf(module_path, "%s/%s%s", source_directory, module_relative_path, suffix);
 
-        printf("formin module path: %s\n", module_path);
 
         if (!is_file_readable(module_path)) {
-            printf("no access to: %s\n", module_path);
             continue;
         }
-
-        printf("yes access to: %s\n", module_path);
 
         FILE* file = fopen(module_path, "r");
 

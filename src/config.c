@@ -52,7 +52,6 @@ void config_free(config_t* config) {
 
 char* config_file_find_entry(const char* path, const char* key) {
     if (!is_file_readable(path)) {
-        printf("not readable: %s\n", path);
         return NULL;
     }
 
