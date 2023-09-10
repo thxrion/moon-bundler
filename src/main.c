@@ -4,17 +4,10 @@
 #include <limits.h>
 #include <errno.h>
 
+#include "utils.h"
 #include "config.h"
 #include "lua_syntax.h"
 #include "lua_module_list.h"
-
-#ifdef _WIN32
-    #include <direct.h>
-    #define makedir(path) _mkdir(path)
-#else
-    #include <sys/stat.h>
-    #define makedir(path) mkdir(path, 0777)
-#endif
 
 #define INITIAL_MODULES_CAPACITY 256
 
@@ -22,13 +15,7 @@ int main(int argc, char *argv[]) {
     printf("LOG START\n");
 
     config_t* config = config_new();
-
-    if (argc > 1) {
-        config_process_arguments(config, argc, argv);
-    } else {
-        config_process_file(config);
-    }
-
+    config_process_file(config);
 
     char cwd[256];
     getcwd(cwd, 256);

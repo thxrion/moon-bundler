@@ -14,7 +14,7 @@ __MODULES["dep1"] = function()
 end
 
 __MODULES["dep2"] = function()
--- dep2
+
 end
 
 require("dep1")

@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <limits.h>
 
+#include "utils.h"
 #include "config.h"
 
 #define MAX_LINE_LENGTH 256
@@ -21,51 +22,6 @@ config_t* config_new(void) {
     config->target = NULL;
 
     return config;
-}
-
-char* substrdup(const char* source, size_t start_index, size_t end_index) {
-    size_t substr_len = end_index - start_index;
-    char* result = malloc(substr_len + 1);
-    strncpy(result, source + start_index, substr_len);
-    result[substr_len] = '\0';
-
-    return result;
-}
-
-// TODO: mb try refactor to process one iteration at a time and loop in main?
-void config_process_arguments(config_t* config, size_t argc, char* argv[]) {
-    for (size_t i = 1; i < argc - 1; i++) {
-        char* argument = argv[i];
-        char* next_argument = argv[i + 1];
-
-        if (!strcmp(argument, "--input")) {
-            char* last_separator = strrchr(next_argument, '/');
-            if (!last_separator) {
-                config->entry_point = strdup(next_argument);
-                continue;
-            };
-
-            size_t directory_len = last_separator - next_argument;
-            config->source_directory = substrdup(next_argument, 0, directory_len);
-            // TODO: use regular strdup
-            config->entry_point = substrdup(next_argument, directory_len + strlen("/"), strlen(next_argument));
-            continue;
-        }
-
-        if (!strcmp(argument, "--output")) {
-            char* last_separator = strrchr(next_argument, '/');
-            if (!last_separator) {
-                config->target = strdup(next_argument);
-                continue;
-            };
-
-            size_t directory_len = last_separator - next_argument;
-            config->bundle_directory = substrdup(next_argument, 0, directory_len);
-            // TODO: use regular strdup
-            config->target = substrdup(next_argument, directory_len + strlen("/"), strlen(next_argument));
-            continue;
-        }
-    }
 }
 
 void config_put_default_values(config_t* config) {
@@ -95,9 +51,12 @@ void config_free(config_t* config) {
 }
 
 char* config_file_find_entry(const char* path, const char* key) {
-    FILE* file = fopen(path, "r");
+    if (!is_file_readable(path)) {
+        printf("not readable: %s\n", path);
+        return NULL;
+    }
 
-    // TODO: add not found check
+    FILE* file = fopen(path, "r");
 
     char line[MAX_LINE_LENGTH];
 

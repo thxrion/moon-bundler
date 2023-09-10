@@ -1,6 +1,7 @@
 #include <string.h>
 
 #include "lua_syntax.h"
+#include "utils.h"
 
 const char* lua_bundle_prefix =
     "__MODULES = {}\n"
@@ -27,10 +28,5 @@ const char* lua_closing_quotes[] = { "'", "\"", "]]" };
 const char* lua_require_path_suffixes[] = { "", ".lua", "/init.lua" };
 
 void lua_require_path_format(char* lua_path) {
-    char *ptr = strchr(lua_path, '.');
-
-    while (ptr != NULL) {
-        *ptr = '/';
-        ptr = strchr(ptr + 1, '.');
-    }
+    return strreplace(lua_path, '.', '/');
 }

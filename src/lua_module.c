@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#include <sys/stat.h>
 
+#include "utils.h"
 #include "lua_module.h"
 #include "lua_syntax.h"
 
@@ -25,15 +24,6 @@ void lua_module_free(lua_module_t module) {
     free(module.code);
 }
 
-// TODO: make shit cross-platform
-int is_dir(const char *path) {
-    struct stat st;
-    if (stat(path, &st) == 0)
-        return S_ISDIR(st.st_mode);
-
-    return 0;
-}
-
 char* lua_module_read_code_by_path(const char* source_directory, const char* lua_path) {
     printf("readin module code by path\n");
     char module_relative_path[strlen(lua_path) + 1];
@@ -49,16 +39,9 @@ char* lua_module_read_code_by_path(const char* source_directory, const char* lua
         sprintf(module_path, "%s/%s%s", source_directory, module_relative_path, suffix);
 
         printf("formin module path: %s\n", module_path);
-        // TODO: no check so that's why segfault
 
-        // TODO: make sure this is cross platform
-        if (access(module_path, F_OK)) {
+        if (!is_file_readable(module_path)) {
             printf("no access to: %s\n", module_path);
-            continue;
-        }
-
-        if (is_dir(module_path)) {
-            printf("path is a directory: %s\n", module_path);
             continue;
         }
 

@@ -10,6 +10,10 @@ function require(path)
 	return __require(path)
 end
 __MODULES["dep1"] = function()
+-- dep1
+end
+
+__MODULES["dep2"] = function()
 
 end
 
