@@ -38,6 +38,8 @@ void lua_module_list_add(lua_module_list_t* list, lua_module_t module) {
 
     list->elements[list->size] = lua_module_duplicate(module);
     list->size++;
+
+    printf("addin module: %s\n", module.path);
 }
 
 void lua_module_list_free(lua_module_list_t* list) {
@@ -50,19 +52,24 @@ void lua_module_list_free(lua_module_list_t* list) {
 }
 
 void lua_module_list_generate(lua_module_list_t* list, const char* source_directory, char* lua_path) {
+    printf("lua module list generate entered\n");
+    printf("lua path: %s\n", lua_path);
     lua_module_t module = {
         .path = lua_path,
         .code = lua_module_read_code_by_path(source_directory, lua_path),
     };
 
-    // printf("path: %s, code:\n%s\n", module.path, module.code);
+    printf("some module - (%s)\ncode:\n%s\n", module.path, module.code);
 
-    if (!lua_module_check_if_valid(module)) {for (size_t i = 1; i < modules->size; i++) {
+    if (!lua_module_check_if_valid(module)) {
         return;
     }
 
+    printf("module valid\n");
+
     lua_module_list_add(list, module);
-    printf("module added: %s,\n%s\n", module.path, module.code);
+
+    printf("module added: %s\n", module.path);
     // TODO: look for segmentation fault cause here
     char* curr_pos = module.code;
 
@@ -103,7 +110,10 @@ void lua_module_list_generate(lua_module_list_t* list, const char* source_direct
         strncpy(lua_submodule_path, curr_pos, lua_submodule_path_len);
         lua_submodule_path[lua_submodule_path_len] = '\0';
 
+        printf("lua submodule found: %s\n", lua_submodule_path);
+
         if (!lua_module_list_contains(list, lua_submodule_path)) {
+            printf("recursion entered\n");
             lua_module_list_generate(list, source_directory, lua_submodule_path);
         }
 
