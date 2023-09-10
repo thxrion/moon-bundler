@@ -4,7 +4,7 @@ if [ $# -eq 0 ]; then
 fi
 
 display_usage() {
-    echo "Script options:"
+    echo "Options:"
     echo "  help          🧙 Display help message"
     echo "  build         👷 Build project"
     echo "  test          🐞 Run tests"
