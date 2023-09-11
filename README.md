@@ -18,10 +18,14 @@ To compile the project you need any C compiler, gcc is used by default
 
 It finds constant require calls, if some file was found - adds it to bundle, for example:
 
+Structure:
+```
 ├── modules
 │   └── nested_module.lua
 ├── main.lua
+```
 
+main.lua
 ```lua
 require("modules.nested_module.lua")
 -- will be added to bundle
