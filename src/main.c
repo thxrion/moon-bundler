@@ -11,6 +11,8 @@
 
 #define INITIAL_MODULES_CAPACITY 256
 
+// TODO: fix the CLRF line ending issue
+
 int main(int argc, char *argv[]) {
     config_t* config = config_new();
     config_process_file(config);

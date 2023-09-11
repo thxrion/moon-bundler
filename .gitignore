@@ -1,5 +1,3 @@
 bin
 *.exe
-tests/deep-import/bundle
-tests/multiple-import/bundle
-tests/simple/bundle
+test/*/bundle/
