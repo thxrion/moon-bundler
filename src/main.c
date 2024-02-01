@@ -30,8 +30,6 @@ int main(int argc, char *argv[]) {
 
         FILE* file = fopen(bundle_path, "w");
 
-        fprintf(file, "%s", lua_bundle_prefix);
-
         for (size_t i = 1; i < modules->size; i++) {
             lua_module_write(file, modules->elements[i]);
         }

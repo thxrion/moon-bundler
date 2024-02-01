@@ -1,7 +1,6 @@
 #ifndef LUA_SYNTAX_H
 #define LUA_SYNTAX_H
 
-extern const char* lua_bundle_prefix;
 extern const char* lua_module_template;
 extern const char* lua_require_keyword;
 extern const char* lua_opening_quotes[3];

@@ -1,21 +1,10 @@
-__MODULES = {}
-
-local __require = require
-function require(path)
-	local module = __MODULES[path]
-	if module then
-		return module()
-	end
-
-	return __require(path)
-end
-__MODULES["dep1"] = function()
+package.preload["dep1"] = (function()
 -- dep1
-end
+end)
 
-__MODULES["dep2"] = function()
+package.preload["dep2"] = (function()
 
-end
+end)
 
 require("dep1")
 require("dep2")
